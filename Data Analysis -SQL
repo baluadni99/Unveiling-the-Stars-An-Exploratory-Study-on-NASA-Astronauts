@@ -1,0 +1,106 @@
+Module 2
+Task 1: Journeying Through Astronaut Profiles
+%%sql
+select * from astronauts;
+
+
+Task 2: Astronaut Status: Counting the Cosmic Pioneers
+%%sql
+select status, count(*) as number from astronauts
+Group by status;
+
+
+Task 3: Exploring Astronauts' Military Branch Diversity.
+%%sql
+select military_branch, count(*) as number from astronauts
+group by military_branch;
+
+
+Task 4: Top Military Ranks Among Astronauts.
+%%sql
+select military_rank, count(*) as top from astronauts
+group by military_rank
+order by top desc
+limit 5;
+
+
+Task 5: Exploring Astronaut Demographics: Gender Insights
+%%sql
+select gender, count(*) as number from astronauts
+group by gender;
+
+
+Task 6: Astronauts' Life Expectancy: A Cosmic Perspective
+%%sql
+SELECT ROUND(AVG(subquery.life_expectancy)) AS Average_life_expectancy
+FROM (
+    SELECT
+        CASE
+            WHEN status = "Deceased" THEN EXTRACT(YEAR FROM death_date) - EXTRACT(YEAR FROM birth_date)
+            ELSE (2023 - EXTRACT(YEAR FROM birth_date)) 
+        END AS life_expectancy
+    FROM astronauts
+) subquery;
+
+
+Task 7: Honoring Female Astronauts: Life Expectancy.
+%%sql
+
+select round(avg(subquery.Life_expectancy)) as Average_Life_Expectancy_Female
+from (
+        select 
+        case
+                when status='Deceased' and Gender = 'Female' then extract(Year from Death_date) - extract(Year from Birth_date)
+                else (2023 - extract(Year from Birth_date))
+            end as Life_expectancy
+            from astronauts
+            where gender="Female"
+)as subquery;
+
+
+Task 8: Celebrating Male Astronauts: Life Expectancy.
+%%sql
+select round(avg(subquery.Life_expectancy)) as Male_Average_Life_Expectancy
+from (
+        select 
+        case
+                when status='Deceased' and Gender = 'Male' then extract(Year from Death_date) - extract(Year from Birth_date)
+                else (2023 - extract(Year from Birth_date))
+            end as Life_expectancy
+            from astronauts
+            where gender="Male"
+)as subquery;
+
+
+
+Task 9: Cosmic Scholars: Top Graduate Majors of Astronauts.
+%%sql
+SELECT Graduate_Major, count(*) as top from astronauts
+group by Graduate_major
+order by top desc
+limit 10
+
+
+
+Task 10: Educational Odyssey: Astronauts and Their Degrees.
+%%sql
+SELECT 
+    (SELECT COUNT(*) FROM astronauts LIMIT 20) AS Number_of_Astronauts,
+    (SELECT COUNT(*) FROM astronauts WHERE Undergraduate_major IS NOT NULL LIMIT 20) AS Astronauts_with_Undergraduate_Degrees,
+    (SELECT COUNT(*) FROM astronauts WHERE Graduate_major IS NOT NULL LIMIT 20) AS Astronauts_with_Graduate_Degrees;
+
+
+
+Task 11: Astronaut Birthplaces: Launching from Earth's Diverse Cities.
+%%sql
+SELECT substring_index(Birth_Place,',',-1)as state, COUNT(*) AS top
+FROM astronauts
+group by STATE
+ORDER BY top DESC
+limit 5;
+
+
+Task 12: Voyages Beyond: Astronauts' Space Flights and Spacewalks.
+%%sql
+select round(avg(space_flights),2) as Average_Number_Of_Space_Flight, round(avg(space_walks),2) as Average_Number_Of_Space_Walks
+from astronauts
